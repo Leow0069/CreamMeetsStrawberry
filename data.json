@@ -1,0 +1,53 @@
+{
+    "female": [
+        {
+            "id": 1,
+            "name": "Black Widow",
+            "occupation": "Marvel Character",
+            "photoURL": "https://terrigen-cdn-dev.marvel.com/content/prod/1x/011blw_ons_crd_04.jpg",
+            "age": 20
+    
+        },
+        {
+            "id": 2,
+            "name": "Wanda Maximoff",
+            "occupation": "Marvel Character",
+            "photoURL": "https://terrigen-cdn-dev.marvel.com/content/prod/1x/012scw_ons_crd_02.jpg",
+            "age": 20
+        
+        },
+        {
+            "id": 3,
+            "name": "Captain Marvel",
+            "occupation": "Marvel Character",
+            "photoURL": "https://terrigen-cdn-dev.marvel.com/content/prod/1x/008cmv_ons_crd_04.jpg",
+            "age": 20 
+        }
+    ],
+
+    "male": [
+        {
+            "id": 1,
+            "name": "Loki",
+            "occupation": "Marvel Character",
+            "photoURL": "https://terrigen-cdn-dev.marvel.com/content/prod/1x/017lok_ons_crd_03.jpg",
+            "age": 20
+        },
+        {
+            "id": 2,
+            "name": "Vision",
+            "occupation": "Marvel Character",
+            "photoURL": "https://terrigen-cdn-dev.marvel.com/content/prod/1x/013vis_ons_crd_01-1.jpg",
+            "age": 20
+
+        },
+        {
+            "id": 3,
+            "name": "Doctor Strange",
+            "occupation": "Marvel Character",
+            "photoURL": "https://terrigen-cdn-dev.marvel.com/content/prod/1x/009drs_ons_crd_02.jpg",
+            "age": 20
+
+        }
+    ]
+}
