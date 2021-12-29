@@ -6,7 +6,7 @@ import tw from 'tailwind-rn';
 
 const LoginScreen = () => {
     const navigation = useNavigation();
-    //const { user } = useAuth();
+    const { user1, user2 } = useAuth();
 
     useLayoutEffect(() => {
         navigation.setOptions({
@@ -20,10 +20,15 @@ const LoginScreen = () => {
             resizeMode="cover"
             style={tw("flex-1")}
             source={{uri: "https://tinder.com/static/tinder.png"}}>
-            <TouchableOpacity style={[tw("absolute bottom-40 w-52 bg-white p-4 rounded-2xl"), 
+            <TouchableOpacity style={[tw("absolute bottom-40 w-60 bg-white p-2 rounded-2xl"), 
             { marginHorizontal: "25%"},
-            ]} onPress={() => navigation.navigate("Home")}>
-                <Text style={tw("font-bold text-center")}>Sign in & get swiping</Text>
+            ]} onPress={() => navigation.navigate("Home", {paramKey: 'Loki' })}>
+                <Text style={tw("font-bold text-center")}>Sign in as Loki & get swiping</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={[tw("absolute bottom-24 w-60 bg-white p-2 rounded-2xl"), 
+            { marginHorizontal: "25%"},
+            ]} onPress={() => navigation.navigate("Home", {paramKey: 'Black Widow' })}>
+                <Text style={tw("font-bold text-center")}>Sign in as Black Window & get swiping</Text>
             </TouchableOpacity>
             </ImageBackground>
         </View>

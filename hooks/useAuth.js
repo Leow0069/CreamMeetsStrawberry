@@ -6,7 +6,7 @@ const AuthContext = createContext({});
 export const AuthProvider = ({ children }) => {
 
     return (
-        <AuthContext.Provider value={{user: null}}>
+        <AuthContext.Provider value={{user1: "Loki", user2: "Black Widow"}}>
             {children}
         </AuthContext.Provider>
        
