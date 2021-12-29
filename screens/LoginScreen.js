@@ -20,7 +20,7 @@ const LoginScreen = () => {
             resizeMode="cover"
             style={tw("flex-1")}
             source={{uri: "https://tinder.com/static/tinder.png"}}>
-            <TouchableOpacity style={[tw("absolute bottom-40 w-52 bg-white p-4 rounded-2xl"), 
+            <TouchableOpacity style={[tw("absolute bottom-40 w-60 bg-white p-2 rounded-2xl"), 
             { marginHorizontal: "25%"},
             ]} onPress={signInWithGoogle}>
                 <Text style={tw("font-bold text-center")}>Sign in & get swiping</Text>

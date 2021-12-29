@@ -15,9 +15,9 @@ const StackNavigator = () => {
     <Stack.Navigator>
         {user ? (
         <>
-        <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name="Chat" component={ChatScreen} />
-        <Stack.Screen name="Message" component={MessageScreen} /> 
+            <Stack.Screen name="Home" component={HomeScreen} />
+            <Stack.Screen name="Chat" component={ChatScreen} />
+            <Stack.Screen name="Message" component={MessageScreen} /> 
         </>
         ) : (
         <Stack.Screen name="Login" component={LoginScreen} />
