@@ -1,8 +1,10 @@
 import React, {useState} from 'react';
 import { View, Text, Image, TextInput, TouchableOpacity, Modal } from 'react-native';
 import tw from 'tailwind-rn';
+import useAuth from '../hooks/useAuth';
 
 const ModalScreen = ({route}) => {
+    // const {user} = useAuth();
     const [image, setImage] = useState(null);
     const [job, setJob] = useState(null);
     const [age, setAge] = useState(null);
