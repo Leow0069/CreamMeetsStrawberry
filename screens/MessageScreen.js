@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import { Text, Button, FlatList, Keyboard, KeyboardAvoidingView, Platform, SafeAreaView, TextInput, TouchableWithoutFeedback, View} from 'react-native';
+import { Button, FlatList, Keyboard, KeyboardAvoidingView, Platform, SafeAreaView, TextInput, TouchableWithoutFeedback, View} from 'react-native';
 import { useRoute } from '@react-navigation/native';
 import Header from '../components/Header';
 import SenderMessage from '../components/SenderMessage';
