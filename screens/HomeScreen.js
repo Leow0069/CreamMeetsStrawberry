@@ -136,7 +136,7 @@ const HomeScreen = ({route}) => {
                 stackSize={5}
                 cardIndex={0}
                 animateCardOpacity
-                verticalSqipe={false}
+                verticalSwipe={false}
                 onSwipedLeft = {(cardIndex) => {
                     // console.log("pass");
                     swipeLeft(cardIndex);
