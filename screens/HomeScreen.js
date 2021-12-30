@@ -3,10 +3,9 @@ import React, {useLayoutEffect, useRef, useState, useEffect} from 'react';
 import { View, Text, Button, SafeAreaView, TouchableOpacity, Image, StyleSheet } from 'react-native';
 import tw from 'tailwind-rn';
 import useAuth from '../hooks/useAuth';
-import generateId from '../lib/generateId';
 import Swiper from 'react-native-deck-swiper';
 import {Ionicons} from '@expo/vector-icons';
-import { onSnapshot, doc, collection, setDoc, getDoc, getDocs, serverTimestamp} from 'firebase/firestore';
+import { onSnapshot, doc, collection, setDoc, getDoc, query, where, getDocs, serverTimestamp} from 'firebase/firestore';
 import { db } from '../configurations/firebase';
 
 const HomeScreen = ({route}) => {
@@ -16,9 +15,9 @@ const HomeScreen = ({route}) => {
     const [profiles, setProfiles] = useState([]);
 
     useLayoutEffect(()=>
-        onSnapshot(doc(db, 'users', user.uid), snapshot=>{
+        onSnapshot(doc(db, 'users', user.uid), (snapshot)=>{
             if (!snapshot.exists()){
-                navigation.navigate('Modal')
+                navigation.navigate('Modal');
             }
         }),[]);
 
@@ -27,20 +26,20 @@ const HomeScreen = ({route}) => {
         const fetchCards = async() => {
 
             const passes = await getDocs(collection(db, 'users', user.uid, 'passes')).then(
-                snapshot => snapshot.docs.map(doc => doc.id)
+                (snapshot) => snapshot.docs.map((doc) => doc.id)
             );
 
             const swipes = await getDocs(collection(db, 'users', user.uid, 'swipes')).then(
-                snapshot => snapshot.docs.map(doc => doc.id)
+                (snapshot) => snapshot.docs.map((doc) => doc.id)
             );
 
             const passedUserIds = passes.length > 0 ? passes: ['emptyArray'];
-            const swipedUserIds = swipes.length > 0 ? passes: ['emptyArray'];
+            const swipedUserIds = swipes.length > 0 ? swipes: ['emptyArray'];
 
             unsubscribe = onSnapshot(query(collection(db, 'users'), where('id', 'not-in', [...passedUserIds, ...swipedUserIds])), 
             (snapshot) => {
                 setProfiles(
-                    snapshot.docs.filter(doc => doc.id !== user.uid).map(doc=>({
+                    snapshot.docs.filter((doc) => doc.id !== user.uid).map(doc=>({
                         id:doc.id,
                         ...doc.data(),
                     })));
@@ -48,7 +47,7 @@ const HomeScreen = ({route}) => {
         };
         fetchCards();
         return unsubscribe;
-    },[db])
+    },[db]);
 
     // const profile = require('../data.json');
 
@@ -80,31 +79,36 @@ const HomeScreen = ({route}) => {
         setDoc(doc(db, 'users', user.uid, 'passes', userSwiped.id), userSwiped);
     };
 
-    const swipeRight = (cardIndex) => {
+    const swipeRight = async(cardIndex) => {
         if(!profiles[cardIndex]) return;
         const userSwiped = profiles[cardIndex];
-        const loggedInProfile = getDoc(db, 'users', user.uid).data();
+        const loggedInUser = await getDoc(doc(db, 'users', user.uid));
+        const loggedInProfile = loggedInUser.data();
 
+        //Get document list from 'users' collection 
+        //      --> check if userSwiped's list of swipes also contains the loggedIn person's profile:
         getDoc(doc(db, 'users', userSwiped.id, 'swipes', user.uid)).then(documentSnapshot=> {
+
+            //Need to record loggedIn person's swipes preferences regardless of match status:
+            setDoc(doc(db, 'users', user.uid, 'swipes', userSwiped.id), userSwiped);
+
+            //If there's a match, there will be a documentSnapshot
             if(documentSnapshot.exists()) {
-                setDoc(doc(db, 'users', user.uid, 'swipes',userSwiped.id), userSwiped);
-                setDoc(doc(db, 'matches', generateId(user.uid, userSwiped.id)), {
+                //Create new collection called 'matches':
+                setDoc(doc(db, 'matches', `${user.uid}+${userSwiped.id}`), {
                     users: {
                         [user.uid]: loggedInProfile,
-                        [userSwiped.id]: userSwiped,
+                        [userSwiped.id]: userSwiped
                     },
                     usersMatched: [user.uid, userSwiped.id],
                     timestamp: serverTimestamp(),
                 });
-                    navigation.navigate('Match', {
-                        loggedInProfile, 
-                        userSwiped
-                    })
-            } else {
-                setDoc(doc(db, 'users', user.uid, 'swipes', userSwiped.id), userSwiped);
+                navigation.navigate('Match', {
+                    loggedInProfile, 
+                    userSwiped
+                });
             }
         });
-        setDoc(doc(db, 'users', user.uid, 'swipes', userSwiped.id), userSwiped);
 };
 
     return(
@@ -118,7 +122,7 @@ const HomeScreen = ({route}) => {
                 </TouchableOpacity>
 
                 <TouchableOpacity onPress = {() => navigation.navigate("Modal")}>
-                    <Image style = {tw("flex-1 h-14 w-14 rounded-full")} source = {require("../assets/logo.png")} />
+                    <Image style = {tw("flex-1 h-14 w-14")} resizeMode="contain" source = {require("../assets/logo.png")} />
                 </TouchableOpacity>
 
                 <TouchableOpacity onPress={()=>navigation.navigate("Chat")}>
@@ -136,7 +140,7 @@ const HomeScreen = ({route}) => {
                 stackSize={5}
                 cardIndex={0}
                 animateCardOpacity
-                verticalSqipe={false}
+                verticalSwipe={false}
                 onSwipedLeft = {(cardIndex) => {
                     // console.log("pass");
                     swipeLeft(cardIndex);
@@ -148,7 +152,7 @@ const HomeScreen = ({route}) => {
                 backgroundColor={"#4FD0E9"}
                 overlayLabels={{
                     left:{
-                        title: 'PASS',
+                        title: 'NO',
                         style:{
                             label:{
                                 textAlign: 'right',
@@ -157,7 +161,7 @@ const HomeScreen = ({route}) => {
                         },
                     },
                     right:{
-                        title: 'MATCH',
+                        title: 'YES',
                         style:{
                             label:{
                                 color:'#4DED30',
@@ -190,9 +194,9 @@ const HomeScreen = ({route}) => {
                             <Text style={tw("font-bold pb-5")}>No more profiles</Text>
                     </View>
                 )}
-                />
-
+                >
                 
+                </Swiper>                
 
             </View>
 

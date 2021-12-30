@@ -1,26 +1,44 @@
+import { useNavigation } from '@react-navigation/native';
+import { doc, serverTimestamp, setDoc } from 'firebase/firestore';
 import React, {useState} from 'react';
-import { View, Text, Image, TextInput, TouchableOpacity, Modal } from 'react-native';
+import { Text, Image, TextInput, TouchableOpacity, Modal, SafeAreaView } from 'react-native';
 import tw from 'tailwind-rn';
+import { db } from '../configurations/firebase';
 import useAuth from '../hooks/useAuth';
 
 const ModalScreen = ({route}) => {
-    // const {user} = useAuth();
+    
+    const {user} = useAuth();
+    const navigation = useNavigation();
+
     const [image, setImage] = useState(null);
     const [job, setJob] = useState(null);
     const [age, setAge] = useState(null);
     const [modalVisible, setModalVisible] = useState(false);
 
     const updateUserProfile = () => {
-        setModalVisible(true);
+        setDoc(doc(db, 'users', user.uid), {
+            id: user.uid,
+            displayName: user.displayName,
+            photoURL: image,
+            job: job,
+            age: age,
+            timestamp: serverTimestamp()
+        }).then(()=>{
+            setModalVisible(true);
+        }).catch((error)=>{
+            alert(error.message);
+        });
     }
 
     return (
-        <View style={tw("flex-1 items-center pt-1")}>
+
+        <SafeAreaView style={tw("flex-1 items-center pt-1")}>
 
         <Modal
-        animationType = {"slide"}
-        transparent={false}
-        visible={modalVisible}>
+            animationType = {"slide"}
+            transparent={false}
+            visible={modalVisible}>
         
         <Image style={tw("h-20 w-full")}
             resizeMode="contain"
@@ -35,7 +53,7 @@ const ModalScreen = ({route}) => {
 
         <TouchableOpacity 
             style={tw("w-full p-3 rounded-xl bottom-0 bg-red-400")} 
-            onPress={() => {setModalVisible(false), setImage(''), setJob(''), setAge('')}}>
+            onPress={() => {setModalVisible(false); navigation.navigate("Home")}}>
             <Text style={tw("text-center text-white text-xl")}>Close</Text>
         </TouchableOpacity> 
       </Modal>
@@ -44,7 +62,7 @@ const ModalScreen = ({route}) => {
             resizeMode="contain"
             source={{uri: "https://www.techadvisor.com/cmsdata/features/3515013/tinder_logo_thumb800.png"}} />
             <Text style={tw("text-xl text-gray-500 p-2 font-bold")}>
-                Welcome {route.params.paramKey}
+                Welcome {user.displayName}
             </Text>
 
             <Text style={tw("text-center p-4 text-gray-400 font-bold")}>
@@ -54,7 +72,7 @@ const ModalScreen = ({route}) => {
             value={image}
             onChangeText={text => setImage(text)} 
             style={tw("text-center text-xl pb-2")}
-            showSoftInputOnFocus={false} 
+            showSoftInputOnFocus={true} 
             placeholder="Enter a Profile Pic URL" />
 
             <Text style={tw("text-center p-4 text-gray-400 font-bold")}>
@@ -64,17 +82,18 @@ const ModalScreen = ({route}) => {
             value={job}
             onChangeText={text => setJob(text)}  
             style={tw("text-center text-xl pb-2")} 
-            showSoftInputOnFocus={false}
+            showSoftInputOnFocus={true}
             placeholder="Enter your occupation" />
 
             <Text style={tw("text-center p-4 text-gray-400 font-bold")}>
                 Step 3: The Age
             </Text>
+
             <TextInput 
             value={age}
             onChangeText={text => setAge(text)} 
             style={tw("text-center text-xl pb-2")} 
-            showSoftInputOnFocus={false}
+            showSoftInputOnFocus={true}
             placeholder="Enter your age" />
 
             <TouchableOpacity 
@@ -82,8 +101,9 @@ const ModalScreen = ({route}) => {
             onPress={updateUserProfile}>
                 <Text style={tw("text-center text-white text-xl")}>Update Profile</Text>
             </TouchableOpacity> 
-        </View>
+
+        </SafeAreaView>
     )
 }
 
-export default ModalScreen
+export default ModalScreen;

@@ -3,7 +3,7 @@ import {FlatList, View, Text} from 'react-native';
 import tw from 'tailwind-rn';
 import useAuth from '../hooks/useAuth';
 import ChatRow from '../components/ChatRow';
-import {collection, onSnapshot, query, where} from '@firebase/firestore';
+import {onSnapshot, collection, query, where} from '@firebase/firestore';
 import {db} from '../configurations/firebase';
 
 const ChatList = () => {
