@@ -1,10 +1,10 @@
 import React from 'react';
 import {View, Text, TouchableOpacity} from 'react-native';
 import tw from 'tailwind-rn';
-import {Ionicons} from '@expo/vector-icons';
+import {Ionicons, Foundation} from '@expo/vector-icons';
 import  {useNavigation} from '@react-navigation/native';
 
-const Header = ({title}) => {
+const Header = ({title, callEnabled}) => {
     const navigation = useNavigation();
     return (
         <View style= {tw('p-2 flex-row items-center justify-between')}>
@@ -14,6 +14,12 @@ const Header = ({title}) => {
                 </TouchableOpacity>
                 <Text style = {tw('text-2xl font-bold pl-2')}> {title} </Text>
             </View>
+
+            {callEnabled && (
+                <TouchableOpacity>
+                    <Foundation style = {tw('px-7')} name='telephone' size={28} color='red'/>
+                </TouchableOpacity>
+            )}
         </View>
     )
 };

@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import { Button, FlatList, Keyboard, KeyboardAvoidingView, Platform, SafeAreaView, TextInput, TouchableWithoutFeedback, View} from 'react-native';
+import { Text, Button, FlatList, Keyboard, KeyboardAvoidingView, Platform, SafeAreaView, TextInput, TouchableWithoutFeedback, View} from 'react-native';
 import { useRoute } from '@react-navigation/native';
 import Header from '../components/Header';
 import SenderMessage from '../components/SenderMessage';
@@ -7,8 +7,22 @@ import ReceiverMessage from '../components/ReceiverMessage';
 import getMatchedUserInfo from '../lib/getMatchedUserInfo';
 import useAuth from '../hooks/useAuth';
 import tw from 'tailwind-rn';
-import {addDoc, collection, serverTimestamp} from "@firebase/firestore";
+import {addDoc, collection, serverTimestamp, query, orderBy, onSnapshot} from "@firebase/firestore";
 import {db} from '../configurations/firebase';
+
+const Messages = ({message}) => {
+    const {user} = useAuth();
+    return(
+        <View>
+            {message.userId === user.uid ? (
+                <SenderMessage key = {message.id} message={message} />
+            ) : (
+                <ReceiverMessage key = {message.id} message={message} />
+            )
+        }
+        </View>)
+}
+
 
 const MessageScreen = () => {
 
@@ -23,12 +37,11 @@ const MessageScreen = () => {
         onSnapshot(
             query(
                 collection(db, "matches", matchDetails.id, "messages"),
-                orderBy("timestamp", "desc")
+                orderBy('timestamp', 'desc')
             ),
-            (snapshot) => setMessages(snapshot.docs.map(doc => ({
-                id: doc.id,
-                ...doc.data(),
-            }))),
+            (snapshot) => setMessages(snapshot.docs.map((doc) => {
+                return {id: doc.id, ...doc.data()};
+            })),
         ), [matchDetails, db]);
 
     const sendMessage = () => {
@@ -46,7 +59,7 @@ const MessageScreen = () => {
     return (
         <SafeAreaView style = {tw("flex-1")}>
 
-            <Header title = {getMatchedUserInfo(matchDetails.users, user.uid).displayName}/>
+            <Header title = {getMatchedUserInfo(matchDetails.users, user.uid).displayName} callEnabled/>
             <KeyboardAvoidingView
                 behavior = {Platform.OS === "ios"? "padding" : "height"}
                 style = {tw("flex-1")}
@@ -57,14 +70,8 @@ const MessageScreen = () => {
                         data = {messages}
                         inverted = {-1}
                         style = {tw('pl-4')}
-                        keyExtractor = {item => item.id}
-                        renderItem = {({item: message})=> {
-                            message.userId === user.uid ? (
-                                <SenderMessage key = {message.id} message={message} />
-                            ) : (
-                                <ReceiverMessage key = {message.id} message={message} />
-                            )
-                        }}
+                        keyExtractor = {(item) => item.id}
+                        renderItem = {({item})=> <Messages message = {item}/>}
                     />
                 </TouchableWithoutFeedback>
                 
