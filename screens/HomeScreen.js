@@ -3,6 +3,7 @@ import React, {useLayoutEffect, useRef, useState, useEffect} from 'react';
 import { View, Text, Button, SafeAreaView, TouchableOpacity, Image, StyleSheet } from 'react-native';
 import tw from 'tailwind-rn';
 import useAuth from '../hooks/useAuth';
+import generateId from '../lib/generateId';
 import Swiper from 'react-native-deck-swiper';
 import {Ionicons} from '@expo/vector-icons';
 import { onSnapshot, doc, collection, setDoc, getDoc, getDocs, serverTimestamp} from 'firebase/firestore';
@@ -82,7 +83,7 @@ const HomeScreen = ({route}) => {
     const swipeRight = (cardIndex) => {
         if(!profiles[cardIndex]) return;
         const userSwiped = profiles[cardIndex];
-        const loggedInProfile = await (await getDoc(db, 'users', user.uid)).data();
+        const loggedInProfile = getDoc(db, 'users', user.uid).data();
 
         getDoc(doc(db, 'users', userSwiped.id, 'swipes', user.uid)).then(documentSnapshot=> {
             if(documentSnapshot.exists()) {
